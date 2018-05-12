@@ -1,0 +1,246 @@
+<?php
+
+/**
+ * @file
+ * Logs changes to user roles.
+ */
+
+define('ROLE_WATCHDOG_ROLE_APPROVED', 3);
+define('ROLE_WATCHDOG_ROLE_REQUEST', 2);
+
+/**
+ * Implement hook_menu
+ */
+function og_role_watchdog_menu() {
+  $items = array();
+
+  $role_grants_title = 'Role grants';
+  if (module_exists('statistics')) {
+    $role_grants_title = 'Track role grants';
+    // The statistics module does not define a default local task, so we need to add one here.
+    $items['node/%node/track/statistics'] = array(
+      'title' => 'Track statistics',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+    );
+  }
+  $items['node/%node/track/role_grants'] = array(
+    'title' => $role_grants_title,
+    'page callback' => 'og_role_watchdog_report',
+    'page arguments' => array(1),
+    'access callback' => '_og_role_watchdog_node_grants_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'og_role_watchdog.pages.inc',
+    'weight' => '10',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_menu_alter
+ *
+ * Modify the menu items defined by role_watchdog to substitute our own pages
+ * for the role history, role grants and role watchdog report pages.
+ */
+function og_role_watchdog_menu_alter(&$items) {
+  if (array_key_exists('admin/reports/role_watchdog', $items)) {
+    $items['admin/reports/role_watchdog']['page callback'] = 'og_role_watchdog_report';
+    $items['admin/reports/role_watchdog']['file'] = 'og_role_watchdog.pages.inc';
+    $items['admin/reports/role_watchdog']['module'] = 'og_role_watchdog';
+  }
+  if (array_key_exists('user/%user/track/role_history', $items)) {
+    $items['user/%user/track/role_history']['page callback'] = 'og_role_watchdog_history';
+    $items['user/%user/track/role_history']['file'] = 'og_role_watchdog.pages.inc';
+    $items['user/%user/track/role_history']['module'] = 'og_role_watchdog';
+  }
+  if (array_key_exists('user/%user/track/role_grants', $items)) {
+    $items['user/%user/track/role_grants']['page callback'] = 'og_role_watchdog_grants';
+    $items['user/%user/track/role_grants']['file'] = 'og_role_watchdog.pages.inc';
+    $items['user/%user/track/role_grants']['module'] = 'og_role_watchdog';
+  }
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function og_role_watchdog_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#og_role_watchdog':
+      return
+      '<p>' . t('OG Role watchdog extends the functionality of the role watchdog module so that it will also automatically record any role changes made within an Organic Group.') . '</p>';
+  }
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function og_role_watchdog_user($type, &$edit, &$account, $category = NULL) {
+  switch ($type) {
+    case 'delete':
+      // Note that it is very important that our hook_user be called before role_watchdog's
+      // hook_user, because the later function will delete the information we are using in our
+      // JOIN below.  We insure that this will be the case by setting our module weight to -1
+      // in og_role_watchdog_install().
+      db_query('DELETE orw FROM {og_role_watchdog} orw INNER JOIN {role_watchdog} rw ON orw.hid=rw.hid WHERE aid=%d', $account->uid);
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter
+ */
+function og_role_watchdog_form_alter(&$form, $form_state, $form_id)
+{
+  if ($form_id == 'og_user_roles_page_form')
+  {
+     $form['#submit'][] = 'og_role_watchdog_og_user_roles_submit';
+     $original_user_roles = array();
+     foreach ($form['user_roles'] as $uid => $info) {
+       if (is_array($info) && array_key_exists('roles', $info)) {
+         $old_roles = array();
+         foreach ($info['roles']['#default_value'] as $old_role) {
+           // $old_role may include the 'default role' for group admins.
+           // Only include roles that have an entry in 'options' to avoid these.
+           if (array_key_exists($old_role, $info['roles']['#options'])) {
+             $old_roles[$old_role] = $old_role;
+           }
+         }
+         $original_user_roles[$uid] = $old_roles;
+       }
+     }
+
+     $form['original_user_roles'] = array(
+       '#type' => 'value',
+       '#value' => $original_user_roles,
+     );
+  }
+}
+
+function og_role_watchdog_og_user_roles_submit($form, &$form_state) {
+  $group_node = $form['#node'];
+  $gid = $group_node->nid;
+  $new_user_roles = array_key_exists('user_roles', $form['submit']['#post']) ? $form['submit']['#post']['user_roles'] : array();
+  foreach ($form['original_user_roles']['#value'] as $uid => $old_roles) {
+    $new_roles = array_key_exists($uid, $new_user_roles) ? $new_user_roles[$uid] : array();
+    $account = user_load($uid);
+    _og_role_watchdog_process_role_changes($account, $new_roles, $old_roles, $gid);
+  }
+}
+
+/**
+ * Implementation of hook_og
+ */
+function og_role_watchdog_og($op, $nid, $uid, $args = array()) {
+  $account = user_load($uid);
+  switch ($op) {
+    case 'user insert':
+      // If a default role is configured, log that it was granted to the user.
+      if ($default_role = og_user_roles_get_group_default_role($nid)) {
+        if (array_key_exists('is_active', $args) && ($args['is_active'] == 0)) {
+          _og_role_watchdog_request_role($default_role, $account, $nid);
+        }
+        else {
+          _og_role_watchdog_process_role_changes($account, array($default_role), array(), $nid);
+        }
+      }
+      break;
+
+    case 'user approve':
+      if ($default_role = og_user_roles_get_group_default_role($nid)) {
+        _og_role_watchdog_approve_role($default_role, $account, $nid);
+      }
+      break;
+
+    case 'user delete':
+      // og_user_roles_og() has already run, so we no longer know which roles in that
+      // group the user formerly had. An auditor can search down in the role history
+      // to find out, if necessary.
+      if ($default_role = og_user_roles_get_group_default_role($nid)) {
+        _og_role_watchdog_process_role_changes($account, array(), array($default_role), $nid);
+      }
+      break;
+
+    case 'admin new':
+      $default_admin_role = variable_get('og_user_roles_default_admin_role', 0);
+      $default_role = og_user_roles_get_group_default_role($nid);
+      if ($default_admin_role > 0 && $default_admin_role != $default_role) {
+        _og_role_watchdog_process_role_changes($account, array($default_admin_role), array(), $nid);
+      }
+      break;
+
+    case 'admin remove':
+      $default_admin_role = variable_get('og_user_roles_default_admin_role', 0);
+      $default_role = og_user_roles_get_group_default_role($nid);
+      if ($default_admin_role > 0 && $default_admin_role != $default_role) {
+        _og_role_watchdog_process_role_changes($account, array(), array($default_admin_role), $nid);
+      }
+      break;
+  }
+}
+
+/**
+ * Internal function
+ *
+ * Handles role requests.
+ */
+function _og_role_watchdog_request_role($rid, $account, $gid) {
+  $vars = _og_role_watchdog_notification_vars($gid);
+  $record = _role_watchdog_add_role($rid, array(), $account, ROLE_WATCHDOG_ROLE_REQUEST, $vars);
+  _og_role_watchdog_write_group_information($record, $gid);
+}
+
+/**
+ * Internal function
+ *
+ * Handles role approval.
+ */
+function _og_role_watchdog_approve_role($rid, $account, $gid) {
+  $vars = _og_role_watchdog_notification_vars($gid);
+  $record = _role_watchdog_add_role($rid, array(), $account, ROLE_WATCHDOG_ROLE_APPROVED, $vars);
+  _og_role_watchdog_write_group_information($record, $gid);
+}
+
+/**
+ * Internal function
+ *
+ * Handle writing role changes to the database
+ */
+function _og_role_watchdog_process_role_changes($account, $new_roles, $old_roles, $gid) {
+  $vars = _og_role_watchdog_notification_vars($gid);
+  $records = _role_watchdog_process_role_changes($account, $new_roles, $old_roles, $vars);
+  foreach($records as $record) {
+    _og_role_watchdog_write_group_information($record, $gid);
+  }
+}
+
+/**
+ * Internal function
+ *
+ * Handle writing og-specific information to the auxilary og_role_watchdog table.
+ */
+function _og_role_watchdog_write_group_information($record, $gid) {
+  $og_role_watchdog_record = array(
+    'hid' => $record['hid'],
+    'gid' => $gid,
+  );
+  drupal_write_record('og_role_watchdog', $og_role_watchdog_record);
+}
+
+function _og_role_watchdog_notification_vars($gid) {
+  $group_node = node_load($gid);
+
+  return array(
+    '!group' => check_plain($group_node->title),
+    '!role_modifier' => t(' in group "@group"', array('@group' => $group_node->title))
+  );
+
+  return $result;
+}
+
+/**
+ * Access callback for viewing role grants page for one group.
+ */
+function _og_role_watchdog_node_grants_access($node) {
+  return (node_access('view', $node)) && (user_access('view role history'));
+}

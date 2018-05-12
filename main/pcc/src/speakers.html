@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Speakers: Power Case Competition</title>
+</head>
+
+<body>
+    <h1 style="padding: 2rem 0">IEEE Power Case Competition: Proudly Present</h1>
+    <div class="markdown-body" style="margin: 0 5%">
+        <!-- Speakers -->
+    </div>
+    <h1 id="hostedby">Hosted By</h1>
+    <div class="sponsors">
+        <a rel="noopener noreferrer" target="_blank" href="http://toronto.ieee.ca/">
+            <img src="http://sites.ieee.org/toronto/files/2017/04/Logo_Banner_2.png" alt="IEEE Toronto" />
+        </a>
+        <a rel="noopener noreferrer" target="_blank" href="http://ieee.utoronto.ca">
+            <img src="http://ieee.utoronto.ca/img/logo.png" alt="IEEE UofT" />
+        </a>
+    </div>
+    <style>
+        .speaker {
+            border-top: 1px solid #eaecef;
+            padding: 1rem 0;
+        }
+
+        .speaker>img {
+            width: 12rem;
+            display: block;
+        }
+
+        .markdown-body h2 {
+            border-bottom: none;
+        }
+
+        .read-more-state {
+            display: none;
+        }
+
+        @media only screen and (min-width:501px) {
+            .read-more-trigger {
+                display: none;
+            }
+        }
+
+        @media only screen and (max-width: 500px) {
+
+            .speaker h2 {
+                margin: 0;
+            }
+            .read-more-target {
+                opacity: 0;
+                max-height: 0;
+                transition: .3s ease;
+            }
+
+            .read-more-state:checked~.read-more-target {
+                opacity: 1;
+                max-height: 100%;
+            }
+
+            .read-more-state:not(:checked)~.read-more-trigger>.showless {
+                display: none;
+            }
+
+            .read-more-state:checked~.read-more-trigger>.showmore {
+                display: none;
+            }
+
+            .showmore,
+            .showless {
+                background-color: rgba(66, 133, 244, 0.9);
+                color: whitesmoke;
+                border-radius: 100%;
+                line-height: 2rem;
+                width: 2rem;
+                height: 2rem;
+            }
+            .read-more-trigger {
+                cursor: pointer;
+                opacity: 0.8;
+                float: right;
+                text-align: center;
+                display: flex;
+                padding: 1px;
+                justify-content: center;
+                align-content: center;
+                align-items: center;
+            }
+        }
+
+        .sponsors {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+    </style>
+</body>
+
+</html>

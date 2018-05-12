@@ -1,0 +1,104 @@
+<manifest alg="2" build="50" opt="false">
+  <folder name="css">
+    <file name="site_global.css" crc="4003109849"/>
+    <file name="master_a-master.css" crc="516739052" ref="about:index:photography:graphics:logos:resume"/>
+    <file name="about.css" crc="296400539" ref="about"/>
+    <file name="index.css" crc="16086586" ref="index"/>
+    <file name="photography.css" crc="145642793" ref="photography"/>
+    <file name="graphics.css" crc="4229262045" ref="graphics"/>
+    <file name="logos.css" crc="313292076" ref="logos"/>
+    <file name="resume.css" crc="152977502" ref="resume"/>
+  </folder>
+  <folder name="scripts">
+    <folder name="1.1">
+      <file name="jquery-1.7.min.js" crc="526788486" ref="index:graphics:photography:resume:about:logos"/>
+      <file name="museutils.js" crc="523286312" ref="index:graphics:photography:resume:about:logos"/>
+      <file name="pie.js" crc="4067523484" ref="index:graphics:photography:resume:about:logos"/>
+      <file name="pie.htc" crc="119515598" ref="index:graphics:photography:resume:about:logos"/>
+      <file name="jquery.musepolyfill.bgsize.js" crc="4046157214" ref="index:graphics:photography:resume:about:logos"/>
+      <file name="jquery.musemenu.js" crc="766889" ref="index:graphics:photography:resume:about:logos"/>
+      <file name="webpro.js" crc="3826857147" ref="graphics:photography"/>
+      <file name="musewpslideshow.js" crc="4197465286" ref="graphics:photography"/>
+      <file name="jquery.museoverlay.js" crc="46585990" ref="graphics:photography"/>
+    </folder>
+  </folder>
+  <folder name="images">
+    <file name="title.jpg" crc="211550668" ref="index:graphics:photography:resume:about:logos"/>
+    <file name="cse_final-u5621-fr.jpg" crc="236477613" ref="graphics"/>
+    <file name="cse_final.jpg" crc="136779545" ref="graphics"/>
+    <file name="cse_final2.jpg" crc="3861476323" ref="graphics"/>
+    <file name="mies_ii-u3453-fr.jpg" crc="4111539182" ref="graphics"/>
+    <file name="mies_ii737x477.jpg" crc="4252285490" ref="graphics"/>
+    <file name="1_design-development.jpg" crc="3982163133" ref="graphics"/>
+    <file name="3_plan_final---structural.jpg" crc="102432520" ref="graphics"/>
+    <file name="untitled-2.jpg" crc="3973762205" ref="graphics"/>
+    <file name="5_design-detail.jpg" crc="299794375" ref="graphics"/>
+    <file name="main---copy.jpg" crc="15853244" ref="graphics"/>
+    <file name="1_design-development68x45.jpg" crc="3784719971" ref="graphics"/>
+    <file name="3_plan_final---structural68x45.jpg" crc="4108916468" ref="graphics"/>
+    <file name="untitled-266x45.jpg" crc="39242894" ref="graphics"/>
+    <file name="5_design-detail68x45.jpg" crc="140591710" ref="graphics"/>
+    <file name="main---copy66x45.jpg" crc="4280740712" ref="graphics"/>
+    <file name="loading.gif" crc="3815509949" ref="graphics:photography"/>
+    <file name="menu-20-u5590-fr.jpg" crc="288007237" ref="graphics"/>
+    <file name="menu-20358x590.jpg" crc="221850387" ref="graphics"/>
+    <file name="menu-200358x590.jpg" crc="4013139404" ref="graphics"/>
+    <file name="menu-200-u3655-fr.jpg" crc="283585396" ref="graphics"/>
+    <file name="img_9037 - copy (2)-u4023-fr.jpg" crc="3950784746" ref="graphics"/>
+    <file name="img_9037 - copy (2).jpg" crc="4175489614" ref="graphics"/>
+    <file name="img_9037 - copy (2)732x489.jpg" crc="4044254169" ref="graphics"/>
+    <file name="snt_label_sample-u4068-fr.jpg" crc="3867663728" ref="graphics"/>
+    <file name="snt_label_sample.jpg" crc="3779810781" ref="graphics"/>
+    <file name="snt-a4-u4099-fr.jpg" crc="4251514850" ref="graphics"/>
+    <file name="snt_label_sample329x504.jpg" crc="3996527421" ref="graphics"/>
+    <file name="snt-a4390x503.jpg" crc="177622552" ref="graphics"/>
+    <file name="istas13_main2-u4148-fr.jpg" crc="44852172" ref="graphics"/>
+    <file name="istas13_main2328x507.jpg" crc="4047585456" ref="graphics"/>
+    <file name="capital-naturals-u4180-fr.jpg" crc="243530716" ref="graphics"/>
+    <file name="capital-naturals392x507.jpg" crc="177262403" ref="graphics"/>
+    <file name="winecheese-u4225-fr.jpg" crc="517328821" ref="graphics"/>
+    <file name="winecheese.jpg" crc="3886107618" ref="graphics"/>
+    <file name="schroeder-u4258-fr.jpg" crc="3992067187" ref="graphics"/>
+    <file name="schroeder.jpg" crc="529845155" ref="graphics"/>
+    <file name="winecheese359x556.jpg" crc="271028887" ref="graphics"/>
+    <file name="schroeder360x556.jpg" crc="525844652" ref="graphics"/>
+    <file name="butterfly.jpg" crc="4219000369" ref="photography"/>
+    <file name="cherry.jpg" crc="312149508" ref="photography"/>
+    <file name="ship.jpg" crc="4205989699" ref="photography"/>
+    <file name="calm.jpg" crc="249064641" ref="photography"/>
+    <file name="couch.jpg" crc="218327896" ref="photography"/>
+    <file name="bike.jpg" crc="100489320" ref="photography"/>
+    <file name="inception.jpg" crc="4012413757" ref="photography"/>
+    <file name="lakehouse.jpg" crc="3900866499" ref="photography"/>
+    <file name="toronto.jpg" crc="4058709983" ref="photography"/>
+    <file name="sunset.jpg" crc="3830480519" ref="photography"/>
+    <file name="son.jpg" crc="240627617" ref="photography"/>
+    <file name="butterfly68x45.jpg" crc="4258712551" ref="photography"/>
+    <file name="cherry68x45.jpg" crc="3778126904" ref="photography"/>
+    <file name="ship68x45.jpg" crc="393221493" ref="photography"/>
+    <file name="calm68x45.jpg" crc="191939141" ref="photography"/>
+    <file name="couch68x45.jpg" crc="3899420031" ref="photography"/>
+    <file name="bike68x45.jpg" crc="4074810150" ref="photography"/>
+    <file name="inception68x45.jpg" crc="94942873" ref="photography"/>
+    <file name="lakehouse68x45.jpg" crc="3779605141" ref="photography"/>
+    <file name="toronto68x46.jpg" crc="3962988465" ref="photography"/>
+    <file name="sunset60x81.jpg" crc="392340150" ref="photography"/>
+    <file name="son60x91.jpg" crc="51739596" ref="photography"/>
+    <file name="resume-30-web.png" crc="4031119362" ref="resume"/>
+    <file name="2012-12-26 191023-u4809.png" crc="21197952" ref="about"/>
+    <file name="initialc.png" crc="4065564105" ref="logos"/>
+    <file name="finallogo---copy-copy.png" crc="304650699" ref="logos"/>
+    <file name="nn_logo.png" crc="287787974" ref="logos"/>
+    <file name="untitled-2.png" crc="4029747879" ref="logos"/>
+    <file name="shoe-project-logo-(s).png" crc="165121492" ref="logos"/>
+    <file name="wave-concept-logo.png" crc="4241949683" ref="logos"/>
+    <file name="concept_logos - copy.png" crc="3835168628" ref="logos"/>
+    <file name="concept_logos---copy-(2).png" crc="4293467822" ref="logos"/>
+  </folder>
+  <file name="index.html" crc="249334161" mt="1359238403860"/>
+  <file name="graphics.html" crc="418283441" mt="1359238403863"/>
+  <file name="photography.html" crc="460109763" mt="1359238881498"/>
+  <file name="resume.html" crc="3871557325" mt="1359252843565"/>
+  <file name="about.html" crc="4116325929" mt="1359238403866"/>
+  <file name="logos.html" crc="172042665" mt="1359238768925"/>
+</manifest>

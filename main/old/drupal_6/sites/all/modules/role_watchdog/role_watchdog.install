@@ -1,0 +1,125 @@
+<?php
+
+/**
+ * @file
+ * Install file for Role watchdog.
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function role_watchdog_schema() {
+  $schema['role_watchdog'] = array(
+    'description' => t('Log of all role changes.'),
+    'fields' => array(
+      'hid' => array(
+        'description' => t('ID of the history entry.'),
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'aid' => array(
+        'description' => t('User ID of account.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+      'rid' => array(
+        'description' => t('Role ID changed.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+      'action' => array(
+        'description' => t('Action (add or remove) performed.'),
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => t('User ID performing action.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+      'stamp' => array(
+        'description' => t('Time action performed.'),
+        'type' => 'int',
+        'unsigned' => 1,
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'aid' => array('aid'),
+    ),
+    'primary key' => array('hid')
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function role_watchdog_install() {
+  drupal_install_schema('role_watchdog');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function role_watchdog_uninstall() {
+  drupal_uninstall_schema('role_watchdog');
+  db_query("DELETE FROM {variable} WHERE name LIKE 'role_watchdog_%'");
+  cache_clear_all('variables', 'cache');
+}
+
+/**
+ * Update from 6.x-1.x to 6.x-1.2.
+ * Cleanup setting.
+ */
+function role_watchdog_update_6120() {
+  $ret = array();
+  variable_del('role_watchdog_history');
+  return $ret;
+}
+
+/**
+ * Update from 6.x-1.x to 6.x-1.3.
+ * Change superuser ID constant.
+ */
+function role_watchdog_update_6130() {
+  $ret = array();
+
+  $notify_roles = variable_get('role_watchdog_notify_roles', array());
+  if (isset($notify_roles[-1])) {
+    unset($notify_roles[-1]);
+    $notify_roles[ROLE_WATCHDOG_SUPERUSER_RID] = ROLE_WATCHDOG_SUPERUSER_RID;
+    variable_set('role_watchdog_notify_roles', $notify_roles);
+    $ret[] = array('success' => TRUE, 'query' => t("Superuser ID constant updated in notify roles settings."));
+  }
+
+  return $ret;
+}
+
+/**
+ * Add field to store history entry id in.
+ */
+function role_watchdog_update_6131() {
+  $ret = array();
+  $ret[] = update_sql("ALTER TABLE {role_watchdog} ADD `hid` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST");
+  return $ret;
+}
+/* would this work too?
+function role_watchdog_update_6131() {
+  $ret = array();
+
+  db_add_field(&$ret, 'role_watchdog', 'hid', array(
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+  ));
+
+  return $ret;
+}
+*/

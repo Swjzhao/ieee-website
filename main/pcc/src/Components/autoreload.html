@@ -1,0 +1,9 @@
+<script>
+    let blurred = false
+    window.onblur = () => blurred = true
+    document.body.onmouseenter = () => {
+        if (blurred && location.hostname === "localhost")
+            window.location.reload()
+    }
+    console.log('registered reloader')
+</script>
