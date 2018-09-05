@@ -1,0 +1,22 @@
+{
+  "name": "home",
+  "version": "1.0.0",
+  "description": "",
+  "main": "render.js",
+  "scripts": {
+    "start":"node render watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "node-fetch": "^2.0.0",
+    "papaparse": "^4.3.7",
+    "showdown": "^1.8.6"
+  },
+  "dependencies": {
+    "google-auth-library": "^0.12.0",
+    "googleapis": "^26.0.1"
+  }
+}
